@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
+from django.views.decorators.http import require_GET
 from datetime import datetime, timedelta
 import pandas as pd
 from .parse_client import parse_client
@@ -10,7 +11,6 @@ import requests
 
 # Disable SSL warnings for testing
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
 
 # Authentication credentials - UPDATE THESE!
 PARSE_USERNAME = "africa_disease_surveillance"  # Replace with actual username from your Back4App
@@ -29,6 +29,29 @@ def ensure_authenticated():
     except Exception as e:
         print(f"Authentication error: {e}")
         return False
+
+@require_GET
+def health_check(request):
+    """
+    Simple health check endpoint for monitoring
+    """
+    try:
+        # Test basic database/backend connection
+        case_reports = parse_client.get_case_reports(limit=1) or {}
+        
+        return JsonResponse({
+            'status': 'healthy',
+            'timestamp': datetime.now().isoformat(),
+            'database': 'connected' if case_reports.get('results') is not None else 'disconnected',
+            'service': 'Africa Disease Surveillance API'
+        }, status=200)
+    except Exception as e:
+        return JsonResponse({
+            'status': 'unhealthy',
+            'timestamp': datetime.now().isoformat(),
+            'error': str(e),
+            'service': 'Africa Disease Surveillance API'
+        }, status=503)
 
 def home(request):
     """Homepage with dashboard overview"""
@@ -391,6 +414,3 @@ def initialize_parse_data(request):
             'status': 'error',
             'message': f'Connection error: {str(e)}',
         })
-    
-    
-   
