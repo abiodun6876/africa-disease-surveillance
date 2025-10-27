@@ -20,7 +20,7 @@ class ParseClient:
         # Use your actual credentials
         self.app_id = app_id or "K6lQVSqx3B7BU5ePJ1SvdhtXQN7h8S9OMEdOOuNj"
         self.rest_api_key = rest_api_key or "cLxvBXdulLXGklKbBi9Lbhj6Q07CXvVDskWFTZ8K"
-        self.master_key = master_key or "YOUR_MASTER_KEY_HERE"  # IMPORTANT: Get this from Back4App
+        self.master_key = master_key or "c7RPaycZmbjf5TBi8vKCKZ29iNnaTkHaGqiulRyf"  # IMPORTANT: Get this from Back4App
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
 
