@@ -32,3 +32,9 @@ def model_list(request):
 def train_model(request):
     # Model training logic will go here
     return JsonResponse({'status': 'training_started'})
+
+def health_check(request):
+    return JsonResponse({
+        "status": "healthy", 
+        "message": "Africa Disease Surveillance API is running"
+    })

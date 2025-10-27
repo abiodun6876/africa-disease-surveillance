@@ -1,22 +1,29 @@
 ﻿import os
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'zzf_))@zq(p*98jp%&g0!xdtgq69@ayhb)#w=ehhig)#o_)7kq')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+
+# Update ALLOWED_HOSTS with your new domain
 ALLOWED_HOSTS = [
-    'africadiseasesurveillance-6gvw2n7s.b4a.run',
+    'africadiseasesurveillance-d60iszac.b4a.run',  # Your new domain
+    'africadiseasesurveillance-6gvw2n7s.b4a.run',  # Your old domain (keep for redirects)
     'localhost',
     '127.0.0.1',
     '0.0.0.0',
 ]
 
-
+# Add CSRF trusted origins
+CSRF_TRUSTED_ORIGINS = [
+    'https://africadiseasesurveillance-d60iszac.b4a.run',
+    'https://africadiseasesurveillance-6gvw2n7s.b4a.run',
+]
 
 # Application definition
 INSTALLED_APPS = [
@@ -31,7 +38,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Add this for static files
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -68,18 +75,20 @@ DATABASES = {
     }
 }
 
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Don't use STATICFILES_DIRS if the directory doesn't exist
+# STATICFILES_DIRS = [BASE_DIR / 'static']
+
 # Internationalization
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-
-# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Parse configuration

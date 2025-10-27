@@ -392,4 +392,5 @@ def initialize_parse_data(request):
             'message': f'Connection error: {str(e)}',
         })
     
+    
    

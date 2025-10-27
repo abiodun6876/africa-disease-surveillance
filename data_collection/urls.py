@@ -10,4 +10,5 @@ urlpatterns = [
     path('alerts/', views.alerts_view, name='alerts'),
     path('api/stats/', views.api_stats, name='api_stats'),
     path('initialize/', views.initialize_parse_data, name='initialize_parse_data'),
+    path('health/', views.health_check, name='health_check'),
 ]
