@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Step Indicator -->
+            <div class="step-indicator fade-in">
+                <div class="step active">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Select Data</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Upload File</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Review & Confirm</div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Complete</div>
+                </div>
+            </div>
+
+            <!-- Upload Card -->
+            <div class="card fade-in" style="animation-delay: 0.2s;">
+                <div class="card-header">
+                    <h4><i class="fas fa-upload me-2"></i>Bulk Data Upload</h4>
+                </div>
+                <div class="card-body p-4">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %} me-2"></i>
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    {{ form.disease.label_tag }}
+                                    {{ form.disease }}
+                                    {% if form.disease.errors %}
+                                        <div class="text-danger small">{{ form.disease.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    {{ form.health_facility.label_tag }}
+                                    {{ form.health_facility }}
+                                    {% if form.health_facility.errors %}
+                                        <div class="text-danger small">{{ form.health_facility.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    {{ form.data_file.label_tag }}
+                                    {{ form.data_file }}
+                                    {% if form.data_file.help_text %}
+                                        <small class="form-text text-muted">{{ form.data_file.help_text }}</small>
+                                    {% endif %}
+                                    {% if form.data_file.errors %}
+                                        <div class="text-danger small">{{ form.data_file.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    {{ form.file_format.label_tag }}
+                                    {{ form.file_format }}
+                                    {% if form.file_format.errors %}
+                                        <div class="text-danger small">{{ form.file_format.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- File Template Download -->
+                        <div class="alert alert-warning">
+                            <h6><i class="fas fa-download me-2"></i>Download Template</h6>
+                            <p class="mb-2">Use our template to ensure proper formatting:</p>
+                            <div class="d-flex gap-2">
+                                <a href="#" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-file-csv me-1"></i>CSV Template
+                                </a>
+                                <a href="#" class="btn btn-outline-success btn-sm">
+                                    <i class="fas fa-file-excel me-1"></i>Excel Template
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-upload me-2"></i>Upload Data
+                                    </button>
+                                    <a href="{% url 'submit_data' %}" class="btn btn-outline-secondary">
+                                        <i class="fas fa-plus me-2"></i>Single Entry
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- CSV Template Example -->
+            <div class="card mt-4 template-card fade-in" style="animation-delay: 0.4s;">
+                <div class="card-header">
+                    <h5><i class="fas fa-file-csv me-2"></i>CSV Template Example</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">Your CSV file should follow this format. The first row should contain column headers.</p>
+                    <pre class="bg-light p-3 border-0">
+date_reported,patient_age,patient_sex,symptoms,status,cases,deaths,region,latitude,longitude
+2024-01-01,25,Male,"fever,cough",confirmed,1,0,Lagos,6.515,3.375
+2024-01-02,30,Female,"headache,fatigue",suspected,1,0,Abuja,9.076,7.398</pre>
+                    
+                    <div class="mt-3">
+                        <h6><i class="fas fa-lightbulb me-2 text-warning"></i>Tips for successful upload:</h6>
+                        <ul class="text-muted">
+                            <li>Ensure dates are in YYYY-MM-DD format</li>
+                            <li>Case numbers should be integers</li>
+                            <li>Region names should be consistent</li>
+                            <li>Remove any empty rows from your file</li>
+                            <li>Separate multiple symptoms with commas</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.step-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.step-indicator::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #e9ecef;
+    z-index: 1;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.step.active .step-number {
+    background: linear-gradient(135deg, #2c5aa0, #1e88e5);
+    color: white;
+    box-shadow: 0 4px 10px rgba(44, 90, 160, 0.3);
+}
+
+.step-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #666;
+}
+
+.step.active .step-label {
+    color: #2c5aa0;
+    font-weight: 600;
+}
+
+.template-card {
+    border-left: 4px solid #43a047;
+}
+
+.fade-in {
+    animation: fadeIn 0.8s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+{% endblock %}

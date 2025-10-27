@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Africa Disease Surveillance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script type="text/javascript" src="https://unpkg.com/parse/dist/parse.min.js"></script>
+    <style>
+        :root {
+            --primary: #2c5aa0;
+            --secondary: #1e88e5;
+            --success: #43a047;
+            --warning: #ff9800;
+            --info: #00acc1;
+            --dark: #1a237e;
+            --light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="%23ffffff" opacity="0.1"><polygon points="0,0 1000,50 1000,100 0,100"/></svg>');
+            background-size: cover;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border-left: 5px solid var(--primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-card .card-body {
+            padding: 2rem 1rem;
+        }
+
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 25px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(44, 90, 160, 0.4);
+        }
+
+        .nav-link {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin: 0 0.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table th {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+        }
+
+        .quick-actions .btn {
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            padding: 0.75rem 1rem;
+            font-weight: 500;
+        }
+
+        footer {
+            background: rgba(26, 35, 126, 0.9);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            
+            .stat-card .card-body {
+                padding: 1.5rem 0.5rem;
+            }
+            
+            .feature-card {
+                margin-bottom: 1rem;
+            }
+            
+            .nav-link {
+                margin: 0.2rem 0;
+                text-align: center;
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation python manage.py runserver-->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: rgba(26, 35, 126, 0.95); backdrop-filter: blur(10px);">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-globe-africa me-2"></i>Africa Disease Surveillance
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link active" href="/">
+                        <i class="fas fa-home me-1"></i>Home
+                    </a>
+                    <a class="nav-link" href="/data/submit/">
+                        <i class="fas fa-plus-circle me-1"></i>Submit Data
+                    </a>
+                    <a class="nav-link" href="/data/bulk-upload/">
+                        <i class="fas fa-upload me-1"></i>Bulk Upload
+                    </a>
+                    <a class="nav-link" href="/data/dashboard/">
+                        <i class="fas fa-chart-bar me-1"></i>Dashboard
+                    </a>
+                    <a class="nav-link" href="/admin/">
+                        <i class="fas fa-cog me-1"></i>Admin
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section py-5">
+        <div class="container text-center position-relative">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <h1 class="display-4 fw-bold mb-4 fade-in">
+                        Africa Disease Surveillance System
+                    </h1>
+                    <p class="lead mb-4 fade-in" style="animation-delay: 0.2s;">
+                        Advanced multi-country platform for real-time disease monitoring, 
+                        AI-powered predictions, and proactive outbreak response across Africa
+                    </p>
+                    <div class="fade-in" style="animation-delay: 0.4s;">
+                        <a href="/data/submit/" class="btn btn-primary btn-lg me-3">
+                            <i class="fas fa-rocket me-2"></i>Get Started
+                        </a>
+                        <a href="/data/dashboard/" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-chart-line me-2"></i>View Analytics
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <!-- Statistics Cards -->
+        <div class="row mb-5">
+            <div class="col-md-3 mb-4">
+                <div class="stat-card text-center fade-in">
+                    <div class="card-body">
+                        <i class="fas fa-flag text-primary"></i>
+                        <h5 class="card-title text-muted">Countries</h5>
+                        <h2 class="text-primary">{{ total_countries }}</h2>
+                        <small class="text-muted">Active monitoring</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card text-center fade-in" style="animation-delay: 0.1s;">
+                    <div class="card-body">
+                        <i class="fas fa-virus text-success"></i>
+                        <h5 class="card-title text-muted">Diseases Tracked</h5>
+                        <h2 class="text-success">{{ total_diseases }}</h2>
+                        <small class="text-muted">Communicable & NCDs</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card text-center fade-in" style="animation-delay: 0.2s;">
+                    <div class="card-body">
+                        <i class="fas fa-chart-line text-warning"></i>
+                        <h5 class="card-title text-muted">Total Cases</h5>
+                        <h2 class="text-warning">{{ total_cases }}</h2>
+                        <small class="text-muted">Tracked & analyzed</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card text-center fade-in" style="animation-delay: 0.3s;">
+                    <div class="card-body">
+                        <i class="fas fa-shield-alt text-info"></i>
+                        <h5 class="card-title text-muted">Active Systems</h5>
+                        <h2 class="text-info">6</h2>
+                        <small class="text-muted">Integrated modules</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="row mb-5">
+            <div class="col-12 text-center mb-4">
+                <h2 class="fw-bold text-white">Advanced Features</h2>
+                <p class="text-light">Comprehensive tools for disease surveillance and management</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h4>AI Predictions</h4>
+                    <p class="text-muted">Machine learning models for outbreak prediction and risk assessment</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card fade-in" style="animation-delay: 0.1s;">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <h4>Real-time Mapping</h4>
+                    <p class="text-muted">Interactive maps showing disease hotspots and spread patterns</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="feature-card fade-in" style="animation-delay: 0.2s;">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h4>Automated Alerts</h4>
+                    <p class="text-muted">Smart notifications for emerging threats and critical changes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Row -->
+        <div class="row">
+            <!-- Recent Submissions -->
+            <div class="col-lg-8 mb-4">
+                <div class="card border-0 shadow fade-in">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h5 class="mb-0">
+                            <i class="fas fa-clock me-2"></i>Recent Data Submissions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_submissions %}
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Country</th>
+                                            <th>Disease</th>
+                                            <th>Date</th>
+                                            <th>Cases</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for data in recent_submissions %}
+                                        <tr>
+                                            <td>
+                                                <i class="fas fa-flag text-primary me-2"></i>
+                                                {{ data.country.name }}
+                                            </td>
+                                            <td>
+                                                <i class="fas fa-virus text-danger me-2"></i>
+                                                {{ data.disease.name }}
+                                            </td>
+                                            <td>{{ data.date_reported }}</td>
+                                            <td>
+                                                <span class="badge bg-warning text-dark">{{ data.cases }}</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-success">Verified</span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="fas fa-database fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No data submissions yet.</p>
+                                <a href="/data/submit/" class="btn btn-primary">
+                                    <i class="fas fa-plus me-2"></i>Submit First Entry
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="col-lg-4 mb-4">
+                <div class="card border-0 shadow fade-in" style="animation-delay: 0.2s;">
+                    <div class="card-header bg-success text-white py-3">
+                        <h5 class="mb-0">
+                            <i class="fas fa-bolt me-2"></i>Quick Actions
+                        </h5>
+                    </div>
+                    <div class="card-body quick-actions">
+                        <a href="/data/submit/" class="btn btn-primary w-100 mb-3">
+                            <i class="fas fa-plus-circle me-2"></i>Submit Single Entry
+                        </a>
+                        <a href="/data/bulk-upload/" class="btn btn-outline-primary w-100 mb-3">
+                            <i class="fas fa-upload me-2"></i>Bulk Upload Data
+                        </a>
+                        <a href="/data/dashboard/" class="btn btn-outline-success w-100 mb-3">
+                            <i class="fas fa-chart-bar me-2"></i>View Dashboard
+                        </a>
+                        <a href="/admin/" class="btn btn-outline-dark w-100">
+                            <i class="fas fa-cog me-2"></i>Admin Panel
+                        </a>
+                    </div>
+                </div>
+
+                <!-- System Status python manage.py runserver-->
+                <div class="card border-0 shadow mt-4 fade-in" style="animation-delay: 0.3s;">
+                    <div class="card-header bg-info text-white py-3">
+                        <h5 class="mb-0">
+                            <i class="fas fa-server me-2"></i>System Status
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>Database</span>
+                            <span class="badge bg-success">Online</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>API Services</span>
+                            <span class="badge bg-success">Active</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>ML Models</span>
+                            <span class="badge bg-success">Running</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Data Sync</span>
+                            <span class="badge bg-success">Synced</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer python manage.py runserver-->
+    <footer class="mt-5">
+        <div class="container py-4">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">&copy; 2024 Africa Disease Surveillance System. Protecting health across the continent.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <div class="social-links">
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-github"></i></a>
+                        <a href="#" class="text-white"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+        Parse.initialize("APP_ID", "K6lQVSqx3B7BU5ePJ1SvdhtXQN7h8S9OMEdOOuNj");
+Parse.serverURL = 'https://parseapi.back4app.com';
+        // Add simple animations on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            fadeElements.forEach(el => {
+                el.style.opacity = 0;
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

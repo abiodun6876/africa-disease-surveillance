@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Africa Disease Surveillance System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2c5aa0;
+            --secondary: #1e88e5;
+            --success: #43a047;
+            --warning: #ff9800;
+            --danger: #e53935;
+            --info: #00acc1;
+            --dark: #1a237e;
+            --light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fb;
+            color: #333;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--dark) 100%);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card .card-body {
+            padding: 1.5rem;
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 6px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(44, 90, 160, 0.4);
+        }
+
+        .nav-link {
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            color: #555;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(44, 90, 160, 0.1);
+            color: var(--primary);
+        }
+
+        .table-responsive {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .table th {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #eee;
+        }
+
+        .quick-actions .btn {
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+            padding: 0.75rem 1rem;
+            font-weight: 500;
+            width: 100%;
+            text-align: left;
+        }
+
+        footer {
+            background: rgba(26, 35, 126, 0.9);
+            color: white;
+        }
+
+        .alert-system {
+            background: linear-gradient(135deg, #ff9800, #f57c00);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .status-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 0.8s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-bottom: 1.5rem;
+            }
+            
+            .stat-card .card-body {
+                padding: 1rem;
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-globe-africa me-2"></i>Africa Disease Surveillance
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link active" href="/">
+                    <i class="fas fa-home me-1"></i>Dashboard
+                </a>
+                <a class="nav-link" href="/data/submit/">
+                    <i class="fas fa-plus-circle me-1"></i>Submit Data
+                </a>
+                <a class="nav-link" href="/data/bulk-upload/">
+                    <i class="fas fa-upload me-1"></i>Bulk Upload
+                </a>
+                <a class="nav-link" href="/data/dashboard/">
+                    <i class="fas fa-chart-bar me-1"></i>Analytics
+                </a>
+                <a class="nav-link" href="/ml/predict/">
+                    <i class="fas fa-brain me-1"></i>AI Predictions
+                </a>
+                <a class="nav-link" href="/admin/">
+                    <i class="fas fa-cog me-1"></i>Admin
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+    <!-- Main Content -->
+    <div class="container my-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 mb-4">
+                <div class="sidebar fade-in">
+                    <h5 class="mb-3">Navigation</h5>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/">
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/data/submit/">
+                                <i class="fas fa-plus-circle me-2"></i>Submit Data
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/data/bulk-upload/">
+                                <i class="fas fa-upload me-2"></i>Bulk Upload
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/data/dashboard/">
+                                <i class="fas fa-chart-bar me-2"></i>Analytics
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-map-marked-alt me-2"></i>Outbreak Map
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-robot me-2"></i>AI Predictions
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="fas fa-file-pdf me-2"></i>Reports
+                            </a>
+                        </li>
+                    </ul>
+
+                    <hr class="my-4">
+
+                    <h5 class="mb-3">Quick Actions</h5>
+                    <div class="quick-actions">
+                        <a href="/data/submit/" class="btn btn-primary mb-2">
+                            <i class="fas fa-plus-circle me-2"></i>New Submission
+                        </a>
+                        <a href="/data/bulk-upload/" class="btn btn-outline-primary mb-2">
+                            <i class="fas fa-upload me-2"></i>Bulk Upload
+                        </a>
+                        <a href="/data/dashboard/" class="btn btn-outline-success mb-2">
+                            <i class="fas fa-chart-line me-2"></i>Generate Report
+                        </a>
+                        <a href="/admin/" class="btn btn-outline-dark">
+                            <i class="fas fa-cog me-2"></i>Admin Panel
+                        </a>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h5 class="mb-3">System Status</h5>
+                    <div class="mb-2 d-flex justify-content-between align-items-center">
+                        <span>Database</span>
+                        <span class="badge bg-success">Online</span>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between align-items-center">
+                        <span>API Services</span>
+                        <span class="badge bg-success">Active</span>
+                    </div>
+                    <div class="mb-2 d-flex justify-content-between align-items-center">
+                        <span>ML Models</span>
+                        <span class="badge bg-success">Running</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Data Sync</span>
+                        <span class="badge bg-success">Synced</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Area -->
+            <div class="col-lg-9">
+                <!-- Alert Banner -->
+                <div class="alert-system mb-4 fade-in">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                        <div>
+                            <h5 class="mb-1">System Under Active Development</h5>
+                            <p class="mb-0">New features are being added regularly. Report any issues to the development team.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3 mb-3">
+                        <div class="stat-card text-center fade-in">
+                            <div class="card-body">
+                                <i class="fas fa-flag text-primary"></i>
+                                <h5 class="card-title text-muted">Countries</h5>
+                                <h2 class="text-primary">{{ total_countries }}</h2>
+                                <small class="text-muted">Active monitoring</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stat-card text-center fade-in" style="animation-delay: 0.1s;">
+                            <div class="card-body">
+                                <i class="fas fa-virus text-success"></i>
+                                <h5 class="card-title text-muted">Diseases Tracked</h5>
+                                <h2 class="text-success">{{ total_diseases }}</h2>
+                                <small class="text-muted">Communicable & NCDs</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stat-card text-center fade-in" style="animation-delay: 0.2s;">
+                            <div class="card-body">
+                                <i class="fas fa-chart-line text-warning"></i>
+                                <h5 class="card-title text-muted">Total Cases</h5>
+                                <h2 class="text-warning">{{ total_cases }}</h2>
+                                <small class="text-muted">Tracked & analyzed</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="stat-card text-center fade-in" style="animation-delay: 0.3s;">
+                            <div class="card-body">
+                                <i class="fas fa-shield-alt text-info"></i>
+                                <h5 class="card-title text-muted">Active Systems</h5>
+                                <h2 class="text-info">6</h2>
+                                <small class="text-muted">Integrated modules</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features Grid -->
+                <div class="row mb-4">
+                    <div class="col-12 mb-3">
+                        <h3 class="fw-bold">System Features</h3>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="feature-card fade-in">
+                            <div class="feature-icon">
+                                <i class="fas fa-globe-americas"></i>
+                            </div>
+                            <h5>Multi-country Data</h5>
+                            <p class="text-muted">Comprehensive disease data collection across all African nations</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="feature-card fade-in" style="animation-delay: 0.1s;">
+                            <div class="feature-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h5>AI Predictions</h5>
+                            <p class="text-muted">Machine learning models for outbreak prediction and risk assessment</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="feature-card fade-in" style="animation-delay: 0.2s;">
+                            <div class="feature-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <h5>Automated Reports</h5>
+                            <p class="text-muted">Generate comprehensive reports with visualization and insights</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Submissions Table -->
+                <div class="main-content fade-in" style="animation-delay: 0.3s;">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="mb-0">Recent Data Submissions</h4>
+                        <a href="/data/submit/" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>New Submission
+                        </a>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Country</th>
+                                    <th>Disease</th>
+                                    <th>Date</th>
+                                    <th>Cases</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if recent_submissions %}
+                                    {% for data in recent_submissions %}
+                                    <tr>
+                                        <td>
+                                            <i class="fas fa-flag text-primary me-2"></i>
+                                            {{ data.country.name }}
+                                        </td>
+                                        <td>
+                                            <i class="fas fa-virus text-danger me-2"></i>
+                                            {{ data.disease.name }}
+                                        </td>
+                                        <td>{{ data.date_reported }}</td>
+                                        <td>
+                                            <span class="badge bg-warning text-dark">{{ data.cases }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="status-badge bg-success">Verified</span>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center py-4">
+                                            <i class="fas fa-database fa-3x text-muted mb-3"></i>
+                                            <p class="text-muted">No data submissions yet.</p>
+                                            <a href="/data/submit/" class="btn btn-primary">
+                                                <i class="fas fa-plus me-2"></i>Submit First Entry
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    {% if recent_submissions %}
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="text-muted">Showing {{ recent_submissions|length }} recent submissions</div>
+                        <a href="/data/dashboard/" class="btn btn-outline-primary">View All Data</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Charts Row -->
+                <div class="row mt-4">
+                    <div class="col-md-6 mb-4">
+                        <div class="main-content fade-in">
+                            <h5 class="mb-3">Cases by Disease</h5>
+                            <div class="chart-container">
+                                <canvas id="diseaseChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="main-content fade-in" style="animation-delay: 0.1s;">
+                            <h5 class="mb-3">Cases by Country</h5>
+                            <div class="chart-container">
+                                <canvas id="countryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-5 py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start">
+                    <p class="mb-0">&copy; 2023 Africa Disease Surveillance System. Protecting health across the continent.</p>
+                </div>
+                <div class="col-md-6 text-center text-md-end">
+                    <div class="social-links">
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-github"></i></a>
+                        <a href="#" class="text-white"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Server-rendered JSON blobs (keeps template tags out of JS source) -->
+    <script id="diseaseLabelsJson" type="application/json">[{% for stat in disease_stats %}"{{ stat.disease__name|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]</script>
+    <script id="diseaseValuesJson" type="application/json">[{% for stat in disease_stats %}{{ stat.total_cases|default_if_none:0 }}{% if not forloop.last %},{% endif %}{% endfor %}]</script>
+    <script id="countryLabelsJson" type="application/json">[{% for stat in country_stats %}"{{ stat.country__name|escapejs }}"{% if not forloop.last %},{% endif %}{% endfor %}]</script>
+    <script id="countryValuesJson" type="application/json">[{% for stat in country_stats %}{{ stat.total_cases|default_if_none:0 }}{% if not forloop.last %},{% endif %}{% endfor %}]</script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize charts with actual data
+        document.addEventListener('DOMContentLoaded', function() {
+            // Parse server-rendered JSON blocks to avoid template tags inside JS source
+            const diseaseLabels = JSON.parse(document.getElementById('diseaseLabelsJson').textContent || '[]');
+            const diseaseValues = JSON.parse(document.getElementById('diseaseValuesJson').textContent || '[]');
+            const countryLabels = JSON.parse(document.getElementById('countryLabelsJson').textContent || '[]');
+            const countryValues = JSON.parse(document.getElementById('countryValuesJson').textContent || '[]');
+
+            // Disease Cases Chart - Using actual disease stats
+            const diseaseCtx = document.getElementById('diseaseChart').getContext('2d');
+            const diseaseChart = new Chart(diseaseCtx, {
+                type: 'bar',
+                data: {
+                    labels: diseaseLabels,
+                    datasets: [{
+                        label: 'Total Cases',
+                        data: diseaseValues,
+                        backgroundColor: 'rgba(44, 90, 160, 0.7)',
+                        borderColor: 'rgba(44, 90, 160, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Country Distribution Chart
+            const countryCtx = document.getElementById('countryChart').getContext('2d');
+
+            // Define a palette and derive background/border colors for each slice
+            const colorPalette = [
+                'rgba(44, 90, 160, 0.7)',
+                'rgba(67, 160, 71, 0.7)',
+                'rgba(255, 152, 0, 0.7)',
+                'rgba(229, 57, 53, 0.7)',
+                'rgba(156, 39, 176, 0.7)',
+                'rgba(0, 172, 193, 0.7)',
+                'rgba(121, 85, 72, 0.7)',
+                'rgba(69, 90, 100, 0.7)'
+            ];
+            const borderPalette = [
+                'rgba(44, 90, 160, 1)',
+                'rgba(67, 160, 71, 1)',
+                'rgba(255, 152, 0, 1)',
+                'rgba(229, 57, 53, 1)',
+                'rgba(156, 39, 176, 1)',
+                'rgba(0, 172, 193, 1)',
+                'rgba(121, 85, 72, 1)',
+                'rgba(69, 90, 100, 1)'
+            ];
+
+            const backgroundColors = countryValues.map((_, i) => colorPalette[i % colorPalette.length]);
+            const borderColors = countryValues.map((_, i) => borderPalette[i % borderPalette.length]);
+
+            const countryChart = new Chart(countryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: countryLabels,
+                    datasets: [{
+                        label: 'Total Cases',
+                        data: countryValues,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Add simple animations on scroll
+            const fadeElements = document.querySelectorAll('.fade-in');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = 1;
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            fadeElements.forEach(el => {
+                el.style.opacity = 0;
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

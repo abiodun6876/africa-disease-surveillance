@@ -1,0 +1,342 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <!-- Main Form Column -->
+        <div class="col-lg-8 mb-4">
+            <div class="card fade-in">
+                <div class="card-header">
+                    <h4><i class="fas fa-plus-circle me-2"></i>Submit Case Report</h4>
+                    <p class="text-muted mb-0">Report new disease cases to the surveillance system</p>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %} me-2"></i>
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <!-- Basic Information Section -->
+                        <h5 class="mb-3">Basic Information</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    {{ form.report_date.label_tag }}
+                                    {{ form.report_date }}
+                                    {% if form.report_date.errors %}
+                                        <div class="text-danger small">{{ form.report_date.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    {{ form.disease.label_tag }}
+                                    {{ form.disease }}
+                                    {% if form.disease.errors %}
+                                        <div class="text-danger small">{{ form.disease.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Patient Information Section -->
+                        <h5 class="mb-3">Patient Information</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    {{ form.patient_age.label_tag }}
+                                    {{ form.patient_age }}
+                                    {% if form.patient_age.errors %}
+                                        <div class="text-danger small">{{ form.patient_age.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    {{ form.patient_sex.label_tag }}
+                                    {{ form.patient_sex }}
+                                    {% if form.patient_sex.errors %}
+                                        <div class="text-danger small">{{ form.patient_sex.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    {{ form.health_facility.label_tag }}
+                                    {{ form.health_facility }}
+                                    {% if form.health_facility.errors %}
+                                        <div class="text-danger small">{{ form.health_facility.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Symptoms and Status Section -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    {{ form.symptoms.label_tag }}
+                                    {{ form.symptoms }}
+                                    {% if form.symptoms.help_text %}
+                                        <small class="form-text text-muted">{{ form.symptoms.help_text }}</small>
+                                    {% endif %}
+                                    {% if form.symptoms.errors %}
+                                        <div class="text-danger small">{{ form.symptoms.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    {{ form.status.label_tag }}
+                                    {{ form.status }}
+                                    {% if form.status.errors %}
+                                        <div class="text-danger small">{{ form.status.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Case Numbers Section -->
+                        <h5 class="mb-3">Case Statistics</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    {{ form.cases.label_tag }}
+                                    {{ form.cases }}
+                                    {% if form.cases.errors %}
+                                        <div class="text-danger small">{{ form.cases.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    {{ form.deaths.label_tag }}
+                                    {{ form.deaths }}
+                                    {% if form.deaths.errors %}
+                                        <div class="text-danger small">{{ form.deaths.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    {{ form.region.label_tag }}
+                                    {{ form.region }}
+                                    {% if form.region.errors %}
+                                        <div class="text-danger small">{{ form.region.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Location Information Section -->
+                        <h5 class="mb-3">Location Information</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    {{ form.latitude.label_tag }}
+                                    {{ form.latitude }}
+                                    {% if form.latitude.errors %}
+                                        <div class="text-danger small">{{ form.latitude.errors }}</div>
+                                    {% endif %}
+                                    <small class="form-text text-muted">
+                                        Default: Lagos coordinates. Adjust as needed.
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    {{ form.longitude.label_tag }}
+                                    {{ form.longitude }}
+                                    {% if form.longitude.errors %}
+                                        <div class="text-danger small">{{ form.longitude.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Form Actions -->
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane me-2"></i>Submit Case Report
+                                    </button>
+                                    <button type="reset" class="btn btn-outline-secondary">
+                                        <i class="fas fa-redo me-2"></i>Reset Form
+                                    </button>
+                                    <a href="{% url 'home' %}" class="btn btn-outline-danger">
+                                        <i class="fas fa-times me-2"></i>Cancel
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar with Help Information -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Form Guidelines</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-2"></i>Important Notes</h6>
+                        <ul class="mb-0 small">
+                            <li>All fields marked with * are required</li>
+                            <li>Report date cannot be in the future</li>
+                            <li>Deaths cannot exceed number of cases</li>
+                            <li>Use precise coordinates for accurate mapping</li>
+                        </ul>
+                    </div>
+                    
+                    <h6>Status Definitions:</h6>
+                    <ul class="small">
+                        <li><strong>Suspected:</strong> Shows symptoms but not confirmed</li>
+                        <li><strong>Confirmed:</strong> Laboratory confirmed case</li>
+                        <li><strong>Probable:</strong> Epidemiologically linked to confirmed case</li>
+                        <li><strong>Recovered:</strong> Previously confirmed, now recovered</li>
+                        <li><strong>Deceased:</strong> Confirmed case resulting in death</li>
+                    </ul>
+                    
+                    <h6>Quick Actions:</h6>
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'bulk_upload' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-upload me-1"></i>Bulk Upload
+                        </a>
+                        <a href="{% url 'case_reports' %}" class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-list me-1"></i>View All Cases
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Submissions -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6>Recent Submissions</h6>
+                </div>
+                <div class="card-body">
+                    {% if recent_submissions %}
+                        {% for submission in recent_submissions %}
+                        <div class="border-bottom pb-2 mb-2">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ submission.disease.name }}</strong>
+                                <span class="badge bg-{% if submission.status == 'confirmed' %}danger{% else %}warning{% endif %}">
+                                    {{ submission.status }}
+                                </span>
+                            </div>
+                            <small class="text-muted">
+                                {{ submission.facility.name }} • {{ submission.reportDate.iso|slice:":10" }}
+                            </small>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted small mb-0">No recent submissions</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for enhanced form functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-format symptoms input
+    const symptomsField = document.getElementById('id_symptoms');
+    if (symptomsField) {
+        symptomsField.addEventListener('blur', function() {
+            const symptoms = this.value.split(',')
+                .map(s => s.trim())
+                .filter(s => s.length > 0)
+                .join(', ');
+            this.value = symptoms;
+        });
+    }
+    
+    // Validate deaths don't exceed cases
+    const casesField = document.getElementById('id_cases');
+    const deathsField = document.getElementById('id_deaths');
+    
+    function validateDeaths() {
+        if (casesField && deathsField) {
+            const cases = parseInt(casesField.value) || 0;
+            const deaths = parseInt(deathsField.value) || 0;
+            
+            if (deaths > cases) {
+                deathsField.setCustomValidity('Deaths cannot exceed cases');
+            } else {
+                deathsField.setCustomValidity('');
+            }
+        }
+    }
+    
+    if (casesField) casesField.addEventListener('input', validateDeaths);
+    if (deathsField) deathsField.addEventListener('input', validateDeaths);
+});
+</script>
+
+<style>
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #495057;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #2c5aa0, #1e88e5);
+    color: white;
+    border-radius: 15px 15px 0 0 !important;
+    padding: 1.5rem;
+    border: none;
+}
+
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+.btn {
+    border-radius: 0.375rem;
+}
+
+.form-control {
+    border-radius: 0.375rem;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.badge {
+    font-size: 0.75em;
+}
+
+.fade-in {
+    animation: fadeIn 0.8s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+{% endblock %}
