@@ -10,18 +10,17 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'zzf_))@zq(p*98jp%&g0!xdtgq69@ayhb)#
 DEBUG = False
 
 
-# Update ALLOWED_HOSTS with your new domain
-ALLOWED_HOSTS = [
-    'africadiseasesurveillance-d60iszac.b4a.run',  # Your new domain
-    'africadiseasesurveillance-6gvw2n7s.b4a.run',  # Your old domain (keep for redirects)
-    'localhost',
-    '127.0.0.1',
-    '0.0.0.0',
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get('ALLOWED_HOSTS') else [
+    'africadiseasesurveillance-5m2pfuzq.b4a.run',  # Add current host
+    '.b4a.run',  # Wildcard for all subdomains
+    'localhost', 
+    '127.0.0.1'
 ]
+
 
 # Add CSRF trusted origins
 CSRF_TRUSTED_ORIGINS = [
-    'https://africadiseasesurveillance-d60iszac.b4a.run',
+    'https://africadiseasesurveillance-5m2pfuzq.b4a.run',
     'https://africadiseasesurveillance-6gvw2n7s.b4a.run',
 ]
 
